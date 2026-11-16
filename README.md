@@ -1,127 +1,99 @@
 # NocturNet
 
-**Native-rate multimodal token fusion with night-level context for sleep-apnea event classification**
+**Multimodal polysomnography for respiratory-event classification with cross-signal fusion and overnight temporal context.**
 
-A notebook-based research implementation for four-class respiratory-event classification from polysomnographic (PSG) recordings. The supplied research package contains the original model and evaluation workflow, experiment configurations, foundation-model context, and 37 scientific figures.
+NocturNet is a notebook-based research implementation of four-class sleep-related respiratory-event classification from polysomnography (PSG). The original research package includes a physiological-signal processing workflow, temporal multimodal model, internal and external evaluation studies, stored notebook outputs and **37 unaltered scientific figures**. This repository preserves the author's original research artifact and provides academic documentation for inspecting it.
 
-> **Archival release.** This GitHub presentation preserves the supplied research implementation and results. The original notebook, configurations, figures, and binary artifacts are not refactored, edited, or rerun as part of this repository preparation. Numerical results below are transcribed from the notebook's saved outputs, not newly computed for this release.
+> **Research materials.** This repository presents the final NocturNet implementation, study results and figures supplied for the project. The scientific notebook, configurations, outputs and figures are retained as provided.
 
-## Research overview
+![NocturNet model architecture](Code/figures/04_architecture.png)
 
-NocturNet integrates six physiological channels recorded at native processing rates: **ECG**, **EEG**, **airflow**, **thoracic effort**, **abdominal effort**, and **SpO₂**. The notebook implements per-modality convolutional encoding, cross-modality Transformer-based token fusion, attention pooling, and a temporal context model combining a Transformer and bidirectional GRU. The respiratory-event output covers **Normal, Hypopnea, Obstructive, and Central** classes. A supplementary model variant (*NocturNet-S*) adds a sleep-stage prediction head.
+*Original architecture figure supplied with the research package. [View the complete figure catalogue](docs/FIGURE_ATLAS.md).*
 
-![NocturNet architecture](Code/figures/04_architecture.png)
+**Research navigation:** [Methodology](docs/METHODOLOGY.md) · [Results](docs/RESULTS.md) · [Dataset provenance](docs/DATASETS.md) · [Figure atlas](docs/FIGURE_ATLAS.md) · [Notebook cell guide](docs/NOTEBOOK_GUIDE.md) · [Setup and requirements](docs/SETUP_AND_REQUIREMENTS.md) · [Reviewer guide](docs/REVIEWER_GUIDE.md) · [Source integrity](docs/PROVENANCE.md) · [Citation](CITATION.md)
 
-*Figure: supplied NocturNet architecture. Source: `Code/figures/04_architecture.png`.*
+## Research question and contribution
 
-### Implementation at a glance
+Respiratory-event classification from PSG requires identifying physiologic patterns within each epoch while accounting for dynamics across an overnight recording. The supplied NocturNet implementation studies **native-processing-rate multimodal feature extraction, attention-based signal fusion, and temporal context modelling**. The principal classification task distinguishes **Normal, Hypopnea, Obstructive and Central** events. A supplementary variant, *NocturNet-S*, includes sleep-stage prediction. The archive further investigates cross-dataset evaluation, comparator models, robustness, event analysis and AHI-related measures.
 
-| Aspect | Recorded configuration |
+| Implementation property | Recorded in source |
 |---|---|
-| Signals | ECG, EEG, airflow, thorax, abdomen, SpO₂ |
-| Processing rates | 64 Hz (ECG/EEG); 16 Hz (remaining modalities) |
-| Analysis epoch | 30 seconds |
-| Temporal sequence | 64 epochs, stride 32 |
-| Primary prediction | Four-class respiratory event classification |
-| Optional prediction | Sleep stages via NocturNet-S |
-| Framework | Python, PyTorch; Google Colab-oriented notebook |
-| Experiment seeds | 42, 43, 44 (as recorded in configurations) |
+| Input channels | ECG, EEG, airflow, thoracic effort, abdominal effort, SpO₂ |
+| Signal processing | ECG/EEG at 64 Hz; other channels at 16 Hz |
+| Label interval | 30 s |
+| Temporal window | 64 epochs (32 min); stride 32 |
+| Core network | Modality-specific conv encoders; attention/Transformer fusion; temporal Transformer + BiGRU |
+| Primary output | Four-class respiratory-event classification |
+| Implementation | Original Python/PyTorch Jupyter notebook |
+| Recorded seeds | 42, 43, 44 |
 
-The package also includes an **OSF-Base foundation-model study/probe** and associated assets. This is distinct from the principal NocturNet architecture; the backbone asset should not be interpreted as proof that the primary NocturNet model uses pretrained OSF features.
+The notebook also explores the [OSF-Base foundation model](https://github.com/yang-ai-lab/OSF-Open-Sleep-FM) as separate model/probe context. The recorded main NocturNet instantiation uses `use_fm=False`; **the OSF backbone is not asserted to be pretrained weights for the primary classifier**. See [Methodology](docs/METHODOLOGY.md).
 
-## Research material and results
+## Evaluation results
 
-### Datasets
+| Cohort | Role | Accuracy | Macro-F1 | Cohen's κ |
+|---|---|---:|---:|---:|
+| PhysioNet/CinC Challenge 2018 | Internal held-out evaluation | **0.8956** | **0.6984** | 0.6434 |
+| UCDDB | External evaluation | 0.8396 | 0.5697 | 0.5121 |
+| SLPDB | Further external evaluation | 0.6806 | 0.4717 | 0.3819 |
 
-The notebook includes experiments using the following PSG cohorts:
+Values correspond to **NocturNet, seed 42**. Different cohorts, class distributions and comparator settings should not be treated as a unified benchmark. See [Results and interpretation](docs/RESULTS.md) for the multi-seed context and limitations.
 
-| Cohort | Use in the supplied workflow | Source |
-|---|---|---|
-| PhysioNet / CinC Challenge 2018 | Internal train/validation/test evaluation | [PhysioNet](https://physionet.org/content/challenge-2018/1.0.0/) |
-| UCD Sleep Apnea Database (UCDDB) | External evaluation | [PhysioNet](https://physionet.org/content/ucddb/1.0.0/) |
-| MIT-BIH Polysomnographic Database (SLPDB) | Additional external evaluation | [PhysioNet](https://physionet.org/content/slpdb/1.0.0/) |
-
-The original notebook reports 200 Challenge-2018 subjects, 25 UCDDB subjects, and 18 SLPDB records from 16 subjects for the respective analyses. The datasets themselves are not bundled with the research archive; consult each source's access and citation requirements.
-
-### Representative archived results
-
-The following values are taken from the saved `NocturNet` result rows in the original notebook. **They have not been re-executed during GitHub packaging.**
-
-| Evaluation cohort | Accuracy | Macro-F1 | Cohen's κ |
-|---|---:|---:|---:|
-| Challenge-2018 internal test | 0.8956 | 0.6984 | 0.6434 |
-| UCDDB external | 0.8396 | 0.5697 | 0.5121 |
-| SLPDB external | 0.6806 | 0.4717 | 0.3819 |
-
-See the complete stored tables and analysis cells in [`NocturNet_FINAL.ipynb`](Code/NocturNet_FINAL.ipynb). Comparisons with other models, robustness analyses, multi-seed evaluations, calibration, event-level analysis, and AHI-related figures are also retained in the original package.
-
-| Internal/external evaluation | Baseline comparison |
+| Main evaluation | Overnight agreement |
 |---|---|
-| ![Internal evaluation](Code/figures/06_eval_internal.png) | ![Model comparison](Code/figures/08_comparison.png) |
+| ![Internal testing](Code/figures/06_eval_internal.png) | ![AHI agreement](Code/figures/10_ahi_agreement.png) |
 
-| Agreement analysis | Calibration |
-|---|---|
-| ![AHI agreement](Code/figures/10_ahi_agreement.png) | ![Calibration](Code/figures/21_calibration.png) |
+The originally supplied package covers **200 selected Challenge-2018 records**, **25 UCDDB subjects**, and an SLPDB analysis with **18 recordings from 16 subjects**. Exact subject-split identifiers and raw PSG recordings are not included in the supplied materials. Obtain datasets from their authoritative sources: [Challenge 2018](https://physionet.org/content/challenge-2018/1.0.0/), [UCDDB](https://physionet.org/content/ucddb/1.0.0/), and [SLPDB](https://physionet.org/content/slpdb/1.0.0/). [Dataset access details](docs/DATASETS.md).
 
-The [figure atlas](docs/FIGURE_ATLAS.md) indexes **all 37 supplied figures** without replacing or altering them.
+## Read the original implementation
 
-## Repository contents
+The authoritative source is **`Code/NocturNet_FINAL.ipynb`** (29 code cells, including stored execution outputs). **The repository owner is uploading this exact notebook separately**; the other release materials are published independently. Once it appears, use [the original notebook](Code/NocturNet_FINAL.ipynb). Its expected SHA-256 is `25ee2044227e4334de7e73b963f560f381a87c8a8b1961fa27cbaaee1071f2d7`. The notebook includes setup, preprocessing, model definitions, training and evaluation routines, comparative analyses and scientific figures. Its [stage-by-stage map](docs/NOTEBOOK_GUIDE.md) is the recommended starting point.
+
+No substitute, truncated, generated, or re-executed notebook is used. The notebook upload is the **only owner-managed source-file publication step**. See [repository completion and source integrity](docs/ARCHIVE_INTEGRITY.md).
+
+### Getting the data and dependencies
+
+The research notebook was developed around Google Colab and Drive-backed paths such as `MyDrive/QMLNet_v3` for a pre-existing PSG cache and `MyDrive/NocturNet` for results and model-related assets. The repository does **not** contain those caches, complete trained NocturNet checkpoints, original split files, or raw PSG data. The notebook installs certain packages dynamically and does not include a version-locked environment. The required data layout and software dependencies are described in [Setup and requirements](docs/SETUP_AND_REQUIREMENTS.md), and source-file availability is described under [Artifact access](docs/ARTIFACTS_AND_ACCESS.md).
+
+## Research-file organization
 
 ```text
-.
-├── Code/                          # Original supplied research files (unchanged)
-│   ├── NocturNet_FINAL.ipynb      # Complete research notebook, including saved outputs
-│   ├── README.txt                 # Original supplementary-file description
-│   ├── config.json
+NocturNet/
+├── README.md                          # Study overview and archive navigation
+├── Code/
+│   ├── NocturNet_FINAL.ipynb          # Exact supplied notebook
+│   ├── config.json                    # Original settings and study metadata
+│   ├── S1_configuration.json
 │   ├── data_config.json
 │   ├── training_config.json
-│   ├── foundation_model_config.json
-│   ├── S1_configuration.json
 │   ├── event_and_AHI_methods.json
-│   ├── manifest.json
-│   ├── provenance.json
-│   ├── figures/                   # 37 original PNG figures
-│   └── fm/
-│       ├── osf_backbone.pth       # Original file; Git LFS
-│       ├── osf_tokens.npy         # Original file; Git LFS
-│       └── osf_tokens_records.json
+│   ├── manifest.json / provenance.json
+│   ├── figures/                     # 37 original scientific PNGs
+│   └── fm/                           # OSF metadata (large binary artifacts external)
 ├── docs/
+│   ├── METHODOLOGY.md
+│   ├── RESULTS.md
+│   ├── DATASETS.md
+│   ├── SETUP_AND_REQUIREMENTS.md
+│   ├── REVIEWER_GUIDE.md
+│   ├── ARCHIVE_INTEGRITY.md
 │   ├── FIGURE_ATLAS.md
 │   ├── NOTEBOOK_GUIDE.md
-│   └── ARTIFACTS_AND_ACCESS.md
-├── README.md                      # GitHub presentation only
-├── CITATION.md                    # Bibliographic metadata to complete
-├── LICENSE_STATUS.md             # Rights information not inferred
-├── PUBLISHING.md                  # Original-preserving publication procedure
-├── .gitattributes                 # Large-file tracking
-└── .gitignore                     # Avoid new, unrelated local files
+│   └── PROVENANCE.md
+├── CITATION.md / LICENSE_STATUS.md
+└── .gitattributes
 ```
 
-The `Code/` tree is preserved from `Code (1).zip`. The top-level Markdown and Git configuration files are **new documentation/publishing metadata only**. Neither model code nor figures are modified. The original archive also contains small Hugging Face cache metadata under `Code/fm/.cache/`; these remain part of the original source tree when publishing from the complete ZIP.
+**Artifact distinction:** The supplied large `osf_backbone.pth` and `osf_tokens.npy` files are retained in the original private Drive ZIP, not in the ordinary GitHub tree. They are not model weights for the main NocturNet classifier. See [Artifact access](docs/ARTIFACTS_AND_ACCESS.md).
 
-## Opening the notebook
+## Research scope and responsible interpretation
 
-The computational workflow is presented in the original notebook:
+The reported findings concern biomedical machine-learning research, not a deployable clinical device. The respiratory-positive-epoch conversions used in some AHI analyses should not be interpreted as direct independently scored respiratory-event counts. Performance interpretation depends on cohort definition, model configuration, and the evaluation measures described in the notebook.
 
-**[`Code/NocturNet_FINAL.ipynb`](Code/NocturNet_FINAL.ipynb)**
-
-It was prepared in a Google Colab environment, mounts Google Drive when used there, and refers to historical runtime locations such as `MyDrive/QMLNet_v3` and `MyDrive/NocturNet`. See [Notebook guide](docs/NOTEBOOK_GUIDE.md) for the notebook's stage map and [Artifacts and access](docs/ARTIFACTS_AND_ACCESS.md) for the supplied-versus-runtime-file distinction.
-
-This release intentionally supplies **no modified entrypoint, replacement environment, recreated dataset split, or regenerated result**. To execute the notebook, use the corresponding original data/cache and dependencies referenced by that notebook. The archived notebook itself retains its supplied saved results.
-
-## Interpretation and scope
-
-- This is a computational research artifact; **not a clinical diagnostic application**.
-- Values and plots reflect the original notebook's stored records, without new verification or reinterpretation for this release.
-- Physiological datasets and runtime-generated arrays/checkpoints beyond the distributed source package are not silently represented as included.
-- The OSF foundation-model materials are separately identified from the primary NocturNet implementation.
-
-## Citation, rights and acknowledgements
-
-Project author names, final manuscript title, DOI, and the project's software license were not provided in the available research files. No bibliographic or licensing claims have been invented. See [Citation](CITATION.md) and [License status](LICENSE_STATUS.md) for the fields to complete prior to public release.
-
-The research uses datasets distributed by [PhysioNet](https://physionet.org/) and references the [OSF-Open-Sleep-FM](https://github.com/yang-ai-lab/OSF-Open-Sleep-FM) project. Cite the original datasets and third-party foundation-model work under their respective terms.
+The supplied package does not specify an authorized project software license or complete final manuscript citation metadata. These are **not invented**: see [License status](LICENSE_STATUS.md) and [Citation guidance](CITATION.md). The repository should remain private until public distribution is authorized.
 
 ---
 
-*Prepared as a faithful GitHub presentation of the supplied NocturNet research archive. The scientific implementation and historical outputs have not been changed.*
+*NocturNet research code, study results and scientific figures are supplied as the final project materials.*
+
+**Publication status:** All 37 original figures and the supplied text/JSON source assets are available in this repository. The unmodified notebook will be added by the owner. Two large OSF-related binary assets remain in the original privately controlled Drive archive, with [exact locations and sizes documented](docs/ARTIFACTS_AND_ACCESS.md). No Git LFS objects are claimed to have been uploaded.

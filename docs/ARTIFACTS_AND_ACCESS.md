@@ -1,38 +1,34 @@
-# Artifacts and access
+# Research artifacts and access
 
-## Original research files
+## Supplied research package
 
-The authoritative source is the supplied `Code (1).zip`. Keep the internal `Code/` directory and all original filenames. This publishing overlay adds new root-level GitHub documentation; it does **not** change any file inside `Code/`.
+The Drive file `Code (1).zip` is the supplied project package. Its 54 members include the research notebook, 37 PNG figures, recorded configuration/metadata exports, two large foundation-related binary assets and small Hugging Face cache entries. Its contents are retained without scientific changes.
 
-| Artifact | Original location | GitHub handling |
+## GitHub inclusion and exclusions
+
+| File category | GitHub availability | Notes |
 |---|---|---|
-| Full notebook with saved outputs | `Code/NocturNet_FINAL.ipynb` | Ordinary Git |
-| Research figures (37 PNGs) | `Code/figures/` | Ordinary Git |
-| Configuration and provenance JSON | `Code/*.json` | Ordinary Git |
-| Foundation-model backbone | `Code/fm/osf_backbone.pth` | **Git LFS**, original bytes |
-| Foundation-associated NumPy tokens | `Code/fm/osf_tokens.npy` | **Git LFS**, original bytes |
-| Foundation token-record list | `Code/fm/osf_tokens_records.json` | Ordinary Git |
-| Hugging Face cache metadata | `Code/fm/.cache/` | Preserve as supplied; ordinary Git |
-| Existing supplementary text | `Code/README.txt` | Ordinary Git |
+| `Code/NocturNet_FINAL.ipynb` | **Owner will upload separately** | Expected SHA-256 in [integrity note](ARCHIVE_INTEGRITY.md) |
+| `Code/figures/*.png` | 37 original files | Original image bytes, unchanged |
+| Original JSON and `Code/README.txt` | Included | Original metadata and supplementary-file declarations unchanged |
+| `Code/fm/osf_tokens_records.json` | Included | Token record mapping only; not the token tensor |
+| `Code/fm/osf_backbone.pth` | **Not in GitHub repository** | 341,360,652 bytes; remains in owner's original private Drive ZIP |
+| `Code/fm/osf_tokens.npy` | **Not in GitHub repository** | 1,262,745,728 bytes; remains in owner's original private Drive ZIP |
+| Hugging Face `.cache/` metadata | Not in GitHub repository | Download/cache support files, not research implementation |
+| Trained primary NocturNet checkpoints, exact subject split, raw PSG arrays, prediction arrays | Not in source ZIP | These were referenced in the notebook but not included in the supplied artifact |
 
-The 325.55 MiB `.pth` and 1.18 GiB `.npy` files exceed GitHub's standard 100 MiB single-object limit. Root-level `.gitattributes` instructs Git LFS to manage these original paths. No converted or recomputed versions are created by this overlay.
+The `.gitattributes` file documents intended Git LFS tracking if the rights-holders later authorize the two large files' transfer. **Git LFS tracking patterns do not mean LFS objects have been uploaded.** We do not commit nonfunctional placeholder LFS pointer files.
 
-## External datasets and referenced runtime artifacts
+**Drive archive reference (access is controlled by the owner's Drive sharing settings):** [Code (1).zip](https://drive.google.com/file/d/1zFHIELjF0NXtF0Xxe8OsGoN6HrIsZbxD/view). This link is not a guarantee of access for third-party readers or a licence to redistribute the binary contents.
 
-The notebook refers to external PhysioNet datasets and historical runtime directories, including `QMLNet_v3` and `NocturNet`. Raw recordings, processed epoch stores, certain subject-split files, and training/inference runtime artifacts are not part of the supplied `Code (1).zip`. Their absence from the archive does not alter what the archived notebook reports; it determines what a new user must obtain to rerun the full workflow in the original environment.
+## Methodological distinction
 
-The archive's `manifest.json` is preserved exactly, including its descriptions of supplementary exports. Its lists should be read as original metadata, not as a guarantee that every named supplementary JSON is included in this specific ZIP.
+The backbone and token array support the notebook's OSF-Base foundation-model exploration. The primary NocturNet model is instantiated with `use_fm=False`; those assets are **not claimed to be a trained checkpoint for the primary classifier**. See [Methodology](METHODOLOGY.md).
 
-### Official dataset pages
+## Source manifest note
 
-- [PhysioNet / CinC Challenge 2018](https://physionet.org/content/challenge-2018/1.0.0/)
-- [UCDDB](https://physionet.org/content/ucddb/1.0.0/)
-- [MIT-BIH SLPDB](https://physionet.org/content/slpdb/1.0.0/)
+The original `Code/manifest.json` lists stage files (`S2`–`S12`) and structured table exports which are not in the 54-member supplied ZIP. The original metadata is preserved unmodified; see [Provenance](PROVENANCE.md).
 
-## Foundation-model attribution
+## Public reuse
 
-The notebook references the [OSF-Open-Sleep-FM repository](https://github.com/yang-ai-lab/OSF-Open-Sleep-FM) and `yang-ai-lab/OSF-Base` as recorded in its configuration. A third-party model's license and redistribution terms should be followed for the included binary weights. The main NocturNet prediction model should not be described as pretrained on OSF solely because those assets are present.
-
-## Scope of this packaging step
-
-No scientific code is executed, changed, corrected, reformatted, or regenerated. The packaging process only adds the README, figure links, technical guide, citation/rights notices, and Git publishing metadata.
+The repository is intentionally **private** pending confirmation of the project licence, authorship/publication metadata and applicable rights to redistribute original work and third-party assets. Source datasets remain subject to their own access terms: [Datasets](DATASETS.md). No clinical diagnostic claim is made.
