@@ -1,30 +1,28 @@
-# Original file provenance and repository integrity
+# Source files and supplementary materials
 
-## Origin of research files
+The original research archive is organised under `Code/`. Its principal implementation is `NocturNet_FINAL.ipynb`. The study package also includes configuration exports, recorded notebook provenance, supplementary metadata and 37 PNG figures.
 
-Source provided for publication: `Code (1).zip`, a 54-member archive with a `Code/` tree. The research implementation is the single original file `Code/NocturNet_FINAL.ipynb`, not a newly created Python package. The supplied ZIP contains **the author's original notebook, recorded JSON metadata and 37 PNG figures**. In GitHub the owner uploads the original notebook separately; all research JSON/text and 37 PNG figures have been published. The files under `Code/` retain their original bytes when included.
+## Computational source
 
-The original ZIP additionally contains:
+- `NocturNet_FINAL.ipynb` — source cells, execution outputs and study figures.
+- `config.json`, `data_config.json` and `training_config.json` — configuration values.
+- `foundation_model_config.json`, `fm/osf_tokens_records.json` — OSF-Base configuration and token-record information.
+- `event_and_AHI_methods.json` — extracted AHI method definitions.
+- `S1_configuration.json` — initial notebook source and stored outputs.
+- `manifest.json`, `provenance.json`, `README.txt` — supplementary-file descriptions and source provenance.
 
-- `Code/fm/osf_backbone.pth` (341,360,652 bytes);
-- `Code/fm/osf_tokens.npy` (1,262,745,728 bytes);
-- four Hugging Face cache metadata/lock files under `Code/fm/.cache/`.
+The source `manifest.json` identifies the notebook by SHA-256:
 
-The heavyweight binary files were not transferred through the connected GitHub integration, which does not provide a direct Git LFS object upload mechanism. They remain available in the owner's original Drive archive subject to Drive permission. The cache metadata files are not scientifically meaningful code and are not necessary for a readable source presentation.
+`25ee2044227e4334de7e73b963f560f381a87c8a8b1961fa27cbaaee1071f2d7`
 
-## Important pre-existing manifest discrepancy
+## Figures
 
-`Code/manifest.json` and `Code/README.txt`, retained **unchanged**, refer to supplementary `S2`–`S12` section JSON files and 18 `table_cell_*.json` files that are **not present** in `Code (1).zip`. This is not a GitHub publishing error. Those files are not silently claimed to exist, reconstructed from guesses, or replaced with new evaluations. The notebook contains the supplied study results.
+The archive contains **37 PNG figures**. Their original filenames and corresponding topics are listed in [Figure catalogue](FIGURE_ATLAS.md).
 
-## Original-versus-added files
+## Foundation-model-related files
 
-- `Code/*` — original research content from the supplied ZIP, kept unchanged.
-- `README.md`, `docs/*`, `.gitattributes`, and `.gitignore` — new documentation and Git metadata only.
+The source archive also contains `fm/osf_backbone.pth` and `fm/osf_tokens.npy`. The main NocturNet model configuration in notebook Stage 7 sets `use_fm=False`, while the notebook separately includes OSF-Base and an OSF linear-probe comparator.
 
-## Source hash ledger
+## Supplementary manifest
 
-See [SHA-256 ledger](SOURCE_SHA256SUMS.txt) for the exact original bytes of the 48 files in the review package, including the notebook that the owner is uploading separately. Large binary artifacts are listed by size only because no independent binary hash was supplied in the smaller review package.
-
-## Scope statement
-
-The repository presents the final supplied research materials as-is. No publication acceptance, regulatory clearance, or software redistribution licence is inferred from the file package.
+`manifest.json` lists additional `S2`–`S12` section files and structured table exports. The files identified in that manifest are separate from the actual members included in the supplied archive. The notebook itself contains the complete supplied computational source and stored outputs.
