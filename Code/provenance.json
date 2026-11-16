@@ -1,0 +1,18 @@
+{
+  "source": {
+    "source_filename": "NocturNet_FINAL.ipynb",
+    "source_sha256": "25ee2044227e4334de7e73b963f560f381a87c8a8b1961fa27cbaaee1071f2d7",
+    "basis": "Static extraction of supplied notebook source and stored outputs; notebook was not executed.",
+    "numeric_precision": "Stored table precision is retained. Display-rounded values are not reconstructed to higher precision.",
+    "cell_indexing": "zero-based"
+  },
+  "scope": "Configuration and method definitions only. No table or figure files.",
+  "unavailable_runtime_files": [
+    "Actual subject-ID split JSON",
+    "Fitted temperature and class offsets",
+    "Training-history JSON",
+    "Prediction arrays",
+    "Model checkpoints"
+  ],
+  "note": "The notebook references these runtime artifacts but does not embed their complete contents."
+}

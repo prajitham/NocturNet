@@ -1,0 +1,64 @@
+{
+  "title": "NocturNet supplementary files",
+  "provenance": {
+    "source_filename": "NocturNet_FINAL.ipynb",
+    "source_sha256": "25ee2044227e4334de7e73b963f560f381a87c8a8b1961fa27cbaaee1071f2d7",
+    "basis": "Static extraction of supplied notebook source and stored outputs; notebook was not executed.",
+    "numeric_precision": "Stored table precision is retained. Display-rounded values are not reconstructed to higher precision.",
+    "cell_indexing": "zero-based"
+  },
+  "configuration_file": "config.json",
+  "section_files": [
+    "S1_configuration.json",
+    "S2_data_preprocessing_and_split.json",
+    "S3_foundation_model_context.json",
+    "S4_architecture_and_training.json",
+    "S5_primary_evaluation_and_comparisons.json",
+    "S6_seed_and_montage_analyses.json",
+    "S7_event_and_AHI_analysis.json",
+    "S8_explainability.json",
+    "S9_efficiency_and_literature_context.json",
+    "S10_SLPDB_external_validation.json",
+    "S11_label_shift_and_montage_strata.json",
+    "S12_final_figures_and_external_audit.json"
+  ],
+  "table_files": [
+    "table_cell_12_output_00_01.json",
+    "table_cell_13_output_01_01.json",
+    "table_cell_13_output_03_01.json",
+    "table_cell_14_output_00_01.json",
+    "table_cell_15_output_01_01.json",
+    "table_cell_15_output_03_01.json",
+    "table_cell_22_output_01_01.json",
+    "table_cell_21_output_01_01.json",
+    "table_cell_23_output_00_01.json",
+    "table_cell_24_output_01_01.json",
+    "table_cell_24_output_03_01.json",
+    "table_cell_24_output_05_01.json",
+    "table_cell_24_output_07_01.json",
+    "table_cell_25_output_01_01.json",
+    "table_cell_25_output_02_01.json",
+    "table_cell_25_output_04_01.json",
+    "table_cell_25_output_05_01.json",
+    "table_cell_27_output_00_01.json"
+  ],
+  "availability": {
+    "included": [
+      "Configuration extracted from source",
+      "Complete source of all notebook cells",
+      "Stored textual outputs",
+      "Structured versions of embedded HTML tables",
+      "Original HTML tables for verification"
+    ],
+    "not_embedded": [
+      "Raw PSG recordings",
+      "Processed epoch arrays",
+      "Actual subject-ID split JSON",
+      "Model checkpoints",
+      "Per-epoch prediction NPZ files",
+      "Runtime-generated result JSON and CSV files",
+      "Raster and vector figures"
+    ],
+    "interpretation": "Referenced runtime files are not supplied as if they were available. Stored outputs may reflect different execution stages; retain their cell provenance and distinguish single-seed, multi-seed, ensemble and adapted evaluations."
+  }
+}

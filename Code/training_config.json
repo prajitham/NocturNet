@@ -1,0 +1,23 @@
+{
+  "seed": 42,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "seq_len": 64,
+  "seq_stride": 32,
+  "batch_seq": 8,
+  "steps_per_epoch": 400,
+  "epochs": 25,
+  "patience": 6,
+  "lr": 0.001,
+  "wd": 0.0001,
+  "d_model": 128,
+  "focal_gamma": 2.0,
+  "aux_weight": 0.3,
+  "ema": 0.995,
+  "mod_dropout": 0.15,
+  "montage_p": 0.5,
+  "dg_p": 0.8
+}
