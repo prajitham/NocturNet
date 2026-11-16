@@ -1,0 +1,38 @@
+{
+  "package_id": "S1_configuration",
+  "provenance": {
+    "source_filename": "NocturNet_FINAL.ipynb",
+    "source_sha256": "25ee2044227e4334de7e73b963f560f381a87c8a8b1961fa27cbaaee1071f2d7",
+    "basis": "Static extraction of supplied notebook source and stored outputs; notebook was not executed.",
+    "numeric_precision": "Stored table precision is retained. Display-rounded values are not reconstructed to higher precision.",
+    "cell_indexing": "zero-based"
+  },
+  "cells": [
+    {
+      "notebook_cell_index_zero_based": 0,
+      "execution_count": 12,
+      "stage_heading": "# ===================== STAGE 0  =====================",
+      "source_code": "# ===================== STAGE 0  =====================\nimport os, sys, subprocess, importlib\nfor pkg in [\"wfdb\", \"mne\", \"seaborn\", \"einops\", \"huggingface_hub\"]:\n    try: importlib.import_module(pkg)\n    except ImportError: subprocess.run([sys.executable, \"-m\", \"pip\", \"install\", \"-q\", pkg], check=False)\n\nIN_COLAB = \"google.colab\" in sys.modules\nif IN_COLAB:\n    from google.colab import drive\n    drive.mount(\"/content/drive\")\n    ROOT, TMP = \"/content/drive/MyDrive\", \"/content/tmp_raw\"\nelse:\n    ROOT, TMP = os.path.abspath(\".\"), os.path.abspath(\"./tmp_raw\")\nDATA_BASE = os.path.join(ROOT, \"QMLNet_v3\")          # cached PSG data from earlier runs is reused from here\nBASE = os.path.join(ROOT, \"NocturNet\")\nDIRS = {\"raw_ucd\": os.path.join(DATA_BASE, \"raw_ucd\"), \"proc_c18\": os.path.join(DATA_BASE, \"proc_c18\"),\n        \"proc_ucd\": os.path.join(DATA_BASE, \"proc_ucd\"), \"dres\": os.path.join(DATA_BASE, \"results\"),\n        **{k: os.path.join(BASE, k) for k in [\"fm\", \"checkpoints\", \"figures\", \"results\", \"flags\"]}}\nfor d in list(DIRS.values()) + [TMP]: os.makedirs(d, exist_ok=True)\nprint(\"Data cache:\", DATA_BASE, \"\\nOutputs:\", BASE)",
+      "stored_outputs": [
+        {
+          "output_index": 0,
+          "output_type": "stream",
+          "text": "Drive already mounted at /content/drive; to attempt to forcibly remount, call drive.mount(\"/content/drive\", force_remount=True).\nData cache: /content/drive/MyDrive/QMLNet_v3 \nOutputs: /content/drive/MyDrive/NocturNet\n"
+        }
+      ]
+    },
+    {
+      "notebook_cell_index_zero_based": 1,
+      "execution_count": 17,
+      "stage_heading": "import json, time, glob, re, math, random, warnings, shutil, datetime, urllib.request, hashlib",
+      "source_code": "import json, time, glob, re, math, random, warnings, shutil, datetime, urllib.request, hashlib\nfrom fractions import Fraction\nfrom concurrent.futures import ThreadPoolExecutor, as_completed\nimport numpy as np, pandas as pd\nimport matplotlib as mpl, matplotlib.pyplot as plt, seaborn as sns\nfrom matplotlib.patches import FancyBboxPatch, Patch\nimport torch, torch.nn as nn, torch.nn.functional as F\nfrom scipy import signal as sps, stats, io as sio\nimport wfdb\nwarnings.filterwarnings(\"ignore\")\n\nCFG = dict(\n    seed=42, version=\"v5\", seeds=[42, 43, 44],\n    n_challenge=200, split=(0.70, 0.10, 0.20), dl_workers=4,\n    fs_fast=64, fs_slow=16, epoch_sec=30, min_overlap=5,\n    classes=[\"Normal\", \"Hypopnea\", \"Obstructive\", \"Central\"],\n    fast_mods=[\"ECG\", \"EEG\"], slow_mods=[\"Airflow\", \"Thorax\", \"Abdomen\", \"SpO2\"],\n    seq_len=64, seq_stride=32, batch_seq=8, steps_per_epoch=400, epochs=25, patience=6,\n    lr=1e-3, wd=1e-4, d_model=128, focal_gamma=2.0, aux_weight=0.3, ema=0.995, mod_dropout=0.15,\n    osf_repo=\"https://github.com/yang-ai-lab/OSF-Open-Sleep-FM\", osf_hf=\"yang-ai-lab/OSF-Base\", osf_batch=256,\n    n_boot=500, tsne_n=4000,\n)\nMODS = CFG[\"fast_mods\"] + CFG[\"slow_mods\"]; NF, NS = len(CFG[\"fast_mods\"]), len(CFG[\"slow_mods\"])\nLF, LS = CFG[\"fs_fast\"] * CFG[\"epoch_sec\"], CFG[\"fs_slow\"] * CFG[\"epoch_sec\"]\nSTAGE_NAMES = [\"W\", \"N1\", \"N2\", \"N3\", \"R\"]\n\ndef seed_all(s):\n    random.seed(s); np.random.seed(s); torch.manual_seed(s); torch.cuda.manual_seed_all(s)\nseed_all(CFG[\"seed\"])\nDEV = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\"); AMP = DEV.type == \"cuda\"\ntorch.backends.cudnn.benchmark = True\n\nPAL = {\"Normal\": \"#009E73\", \"Hypopnea\": \"#E69F00\", \"Obstructive\": \"#D55E00\", \"Central\": \"#0072B2\"}   # Okabe-Ito\nCCOL = [PAL[c] for c in CFG[\"classes\"]]\nMPAL = dict(zip(MODS, [\"#D55E00\", \"#0072B2\", \"#009E73\", \"#E69F00\", \"#56B4E9\", \"#CC79A7\"]))\nDBPAL = {\"Challenge-2018\": \"#0072B2\", \"UCDDB\": \"#D55E00\", \"SLPDB\": \"#009E73\"}\nPROPOSED = \"NocturNet\"\nNSV = \"NocturNet-S (+ staging head)\"      # same model + auxiliary sleep-staging head; used for the fully automatic AHI\nsns.set_theme(style=\"whitegrid\", context=\"notebook\")\nmpl.rcParams.update({\"figure.dpi\": 110, \"savefig.dpi\": 300, \"axes.titleweight\": \"bold\", \"axes.spines.top\": False,\n                     \"axes.spines.right\": False, \"axes.titlesize\": 12, \"axes.labelsize\": 10, \"font.weight\": \"bold\", \"axes.labelweight\": \"bold\",\n                     \"legend.frameon\": False, \"axes.edgecolor\": \"#b9b6ae\", \"grid.color\": \"#e6e4df\"})\n\ndef savefig(fig, name):\n    for ext in (\"png\", \"pdf\"): fig.savefig(os.path.join(DIRS[\"figures\"], f\"{name}.{ext}\"), bbox_inches=\"tight\")\n    plt.show()\ndef set_flag(n): open(os.path.join(DIRS[\"flags\"], n + \".done\"), \"w\").write(time.ctime())\ndef jdump(o, p):\n    with open(p + \".tmp\", \"w\") as f: json.dump(o, f, indent=2, default=float)\n    os.replace(p + \".tmp\", p)\ndef jload(p):\n    with open(p) as f: return json.load(f)\ndef fetch(urls, dst):\n    if os.path.exists(dst) and os.path.getsize(dst) > 0: return dst\n    err = None\n    for u in urls:\n        try:\n            urllib.request.urlretrieve(u, dst + \".part\"); os.replace(dst + \".part\", dst); return dst\n        except Exception as e: err = e\n    raise RuntimeError(f\"download failed {dst}: {err}\")\n\nprint(\"Device:\", DEV, \"| AMP:\", AMP, \"| done stages:\", sorted(f[:-5] for f in os.listdir(DIRS[\"flags\"])))",
+      "stored_outputs": [
+        {
+          "output_index": 0,
+          "output_type": "stream",
+          "text": "Device: cuda | AMP: True | done stages: ['final_archive', 'stage10_comparators', 'stage11_eval', 'stage12_comparison', 'stage12b_seeds', 'stage12c_robustness', 'stage13_ahi', 'stage13b_waveforms', 'stage14_explain', 'stage15_summary', 'stage16_auto_ahi', 'stage17_literature', 'stage18_slpdb', 'stage18b_slpdb_secondary', 'stage19b_external_audit', 'stage20_extra', 'stage20_nocturnet_dg', 'stage2_data', 'stage3_split', 'stage4_eda', 'stage5_osf', 'stage9_nocturnet']\n"
+        }
+      ]
+    }
+  ]
+}

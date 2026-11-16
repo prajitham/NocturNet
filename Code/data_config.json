@@ -1,0 +1,10 @@
+{
+  "n_challenge": 200,
+  "split": [
+    0.7,
+    0.1,
+    0.2
+  ],
+  "dl_workers": 4,
+  "seed": 42
+}

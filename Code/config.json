@@ -1,0 +1,56 @@
+{
+  "seed": 42,
+  "version": "v5",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_challenge": 200,
+  "split": [
+    0.7,
+    0.1,
+    0.2
+  ],
+  "dl_workers": 4,
+  "fs_fast": 64,
+  "fs_slow": 16,
+  "epoch_sec": 30,
+  "min_overlap": 5,
+  "classes": [
+    "Normal",
+    "Hypopnea",
+    "Obstructive",
+    "Central"
+  ],
+  "fast_mods": [
+    "ECG",
+    "EEG"
+  ],
+  "slow_mods": [
+    "Airflow",
+    "Thorax",
+    "Abdomen",
+    "SpO2"
+  ],
+  "seq_len": 64,
+  "seq_stride": 32,
+  "batch_seq": 8,
+  "steps_per_epoch": 400,
+  "epochs": 25,
+  "patience": 6,
+  "lr": 0.001,
+  "wd": 0.0001,
+  "d_model": 128,
+  "focal_gamma": 2.0,
+  "aux_weight": 0.3,
+  "ema": 0.995,
+  "mod_dropout": 0.15,
+  "osf_repo": "https://github.com/yang-ai-lab/OSF-Open-Sleep-FM",
+  "osf_hf": "yang-ai-lab/OSF-Base",
+  "osf_batch": 256,
+  "n_boot": 500,
+  "tsne_n": 4000,
+  "montage_p": 0.5,
+  "dg_p": 0.8
+}

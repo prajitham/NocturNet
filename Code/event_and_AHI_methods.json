@@ -1,0 +1,20 @@
+{
+  "origin": "Definitions extracted verbatim from notebook source; no tables, figures or stored result outputs.",
+  "definitions": [
+    {
+      "name": "ahi_table",
+      "notebook_cell_index_zero_based": 16,
+      "python_source": "def ahi_table(part):\n    rows = []\n    for r in SPL[part]:\n        a, b = SPAN[r]; sl = np.isin(STG[a:b], [\"N1\", \"N2\", \"N3\", \"R\"]); sh = max(sl.sum() * 30 / 3600, 1e-3)\n        rows.append(dict(rec=r, true=META.loc[r, \"ahi\"], pred=k_ev * ((P[a:b].argmax(1) > 0) & sl).sum() / sh))\n    return pd.DataFrame(rows).set_index(\"rec\")"
+    },
+    {
+      "name": "ahi_table",
+      "notebook_cell_index_zero_based": 17,
+      "python_source": "def ahi_table(part):\n    rows = []\n    for r in SPL[part]:\n        a, b = SPAN[r]\n        sl = np.isin(STG[a:b], [\"N1\", \"N2\", \"N3\", \"R\"])\n        sh = max(sl.sum() * 30 / 3600, 1e-3)\n        rows.append(dict(\n            rec=r,\n            true=META.loc[r, \"ahi\"],\n            pred=k_ev * ((P[a:b].argmax(1) > 0) & sl).sum() / sh,\n        ))\n    return pd.DataFrame(rows).set_index(\"rec\")"
+    },
+    {
+      "name": "agree",
+      "notebook_cell_index_zero_based": 22,
+      "python_source": "def agree(t, col):\n    d = t[col] - t.ref\n    return dict(pearson=stats.pearsonr(t.ref, t[col])[0], spearman=stats.spearmanr(t.ref, t[col])[0], bias=d.mean(),\n                loa_lo=d.mean() - 1.96 * d.std(), loa_hi=d.mean() + 1.96 * d.std(), MAE=d.abs().mean(),\n                severity_acc=np.mean(sev(t.ref) == sev(t[col])), severity_kw=cohen_kappa_score(sev(t.ref), sev(t[col]), weights=\"quadratic\"))"
+    }
+  ]
+}
