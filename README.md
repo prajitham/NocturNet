@@ -4,7 +4,7 @@
 
 NocturNet is a PyTorch research implementation for classifying respiratory events in polysomnographic (PSG) recordings. The study represents six physiological channels at modality-specific processing rates, combines their features using attention-based fusion, and models the temporal context of respiratory events across consecutive 30-second epochs. The classification task comprises four classes: **Normal**, **Hypopnea**, **Obstructive**, and **Central**.
 
-The supplied notebook contains the model and comparator implementations, training procedures, evaluation outputs, analyses of signal-montage configurations, overnight respiratory-event analyses, and visualisations of the experimental results.
+The study includes model comparisons, signal-montage evaluations, overnight respiratory-event analysis, and visualisations of classification performance.
 
 ![NocturNet architecture](Code/figures/04_architecture.png)
 
@@ -41,7 +41,7 @@ The full definitions and training procedures are contained in `Code/NocturNet_FI
 | UCDDB — external evaluation | **0.8396** | **0.5697** | **0.5121** |
 | SLPDB — external evaluation | **0.6806** | **0.4717** | **0.3819** |
 
-*NocturNet, seed 42. Values are taken from the evaluation outputs retained in the supplied notebook (Stages 11 and 18).* 
+*NocturNet; seed 42.*
 
 ### Multi-seed analysis
 
@@ -63,7 +63,7 @@ The study includes comparator experiments, ablation studies, signal-montage eval
 
 ## Implementation and source materials
 
-The principal implementation is the Jupyter notebook **`Code/NocturNet_FINAL.ipynb`**. The source archive contains 29 code cells with stored outputs. The [notebook guide](docs/NOTEBOOK_GUIDE.md) indexes the study stages, including preprocessing, architecture, model training, comparisons, and external evaluation.
+The principal implementation is the Jupyter notebook **`Code/NocturNet_FINAL.ipynb`**. It comprises 29 code cells covering the full experimental workflow. The [notebook guide](docs/NOTEBOOK_GUIDE.md) indexes the study stages, including preprocessing, architecture, model training, comparisons, and external evaluation.
 
 The accompanying files comprise study settings (`config.json`, `data_config.json`, `training_config.json`), model context (`foundation_model_config.json`), event and AHI definitions (`event_and_AHI_methods.json`), supplementary-file metadata (`manifest.json`, `provenance.json`, `S1_configuration.json`), OSF token-record metadata, and **37 PNG figures**.
 
@@ -72,5 +72,3 @@ The notebook uses Drive-backed `QMLNet_v3` and `NocturNet` directories for proce
 ## Figures
 
 The complete set of **37 figures** is available in [`Code/figures/`](Code/figures/) and indexed in the [Figure catalogue](docs/FIGURE_ATLAS.md). These include cohort and signal summaries, architecture, training and evaluation, comparator and ablation analyses, montage robustness, event and overnight views, embedding visualisation, saliency, and external-cohort analyses.
-
-The figure files and original configuration files are retained without modification.
