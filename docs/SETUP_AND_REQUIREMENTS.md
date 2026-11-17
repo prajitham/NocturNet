@@ -33,4 +33,4 @@ In Google Colab, `ROOT` is defined as `/content/drive/MyDrive`. The notebook ide
 | [`foundation_model_config.json`](../Code/foundation_model_config.json) | OSF-Base repository and model settings |
 | [`event_and_AHI_methods.json`](../Code/event_and_AHI_methods.json) | Extracted event and AHI method definitions |
 
-The notebook source contains the download, preprocessing, training and evaluation implementations. It also references intermediate data, checkpoint and prediction files produced or accessed in its runtime directories; those filenames and paths are specified by the corresponding notebook stages.
+The notebook contains the dataset acquisition, preprocessing, training and evaluation procedures, with their corresponding runtime paths defined in the relevant study stages.
