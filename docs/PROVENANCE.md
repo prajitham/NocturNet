@@ -22,7 +22,3 @@ The archive contains **37 PNG figures**. Their original filenames and correspond
 ## Foundation-model-related files
 
 The source archive also contains `fm/osf_backbone.pth` and `fm/osf_tokens.npy`. The main NocturNet model configuration in notebook Stage 7 sets `use_fm=False`, while the notebook separately includes OSF-Base and an OSF linear-probe comparator.
-
-## Supplementary manifest
-
-`manifest.json` lists additional `S2`–`S12` section files and structured table exports. The files identified in that manifest are separate from the actual members included in the supplied archive. The notebook itself contains the complete supplied computational source and stored outputs.
